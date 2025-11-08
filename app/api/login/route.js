@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+const SECRET_KEY = "rahasia123"; // ganti dengan env variable di production
 
 export async function POST(req) {
   try {
@@ -13,10 +17,7 @@ export async function POST(req) {
     const { email, password } = await req.json();
 
     if (!email || !password) {
-      return NextResponse.json(
-        { message: "Email dan password wajib diisi" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "Email dan password wajib diisi" }, { status: 400 });
     }
 
     const [rows] = await db.query(
@@ -32,21 +33,33 @@ export async function POST(req) {
 
     const user = rows[0];
 
-    if (password !== user.password) {
+    // Compare password dengan hash
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return NextResponse.json({ message: "Password salah" }, { status: 401 });
     }
 
-    return NextResponse.json({
+    // Buat token JWT
+    const token = jwt.sign(
+      { id_anggota: user.id_anggota, status: user.status },
+      SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+
+    const response = NextResponse.json({
       message: "Login berhasil",
       id_anggota: user.id_anggota,
       nama: user.nama,
-      status: user.status, // penting untuk redirect
+      status: user.status,
     });
+
+    response.cookies.set("token", token, { httpOnly: true, path: "/" });
+    response.cookies.set("role", user.status, { path: "/" });
+    response.cookies.set("id_anggota", user.id_anggota.toString(), { path: "/" });
+
+    return response;
   } catch (error) {
     console.error("❌ Error login:", error);
-    return NextResponse.json(
-      { message: "Terjadi kesalahan server", error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Terjadi kesalahan server", error: error.message }, { status: 500 });
   }
 }

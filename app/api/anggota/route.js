@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
+import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
@@ -10,8 +11,7 @@ export async function POST(req) {
       database: "db_perpus",
     });
 
-    const body = await req.json();
-    const { nama, alamat, no_telp, email, password } = body;
+    const { nama, alamat, no_telp, email, password } = await req.json();
 
     if (!nama || !alamat || !email || !password) {
       return NextResponse.json(
@@ -29,11 +29,14 @@ export async function POST(req) {
 
     const tanggal_daftar = new Date().toISOString().slice(0, 10);
 
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Simpan anggota baru
     await db.query(
       `INSERT INTO anggota (nama, alamat, no_telp, email, tanggal_daftar, status, password)
        VALUES (?, ?, ?, ?, ?, 'siswa', ?)`,
-      [nama, alamat, no_telp, email, tanggal_daftar, password]
+      [nama, alamat, no_telp, email, tanggal_daftar, hashedPassword]
     );
 
     await db.end();

@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function DaftarAnggotaPage() {
   const router = useRouter();
-
   const [form, setForm] = useState({
     nama: "",
     alamat: "",
@@ -29,10 +29,7 @@ export default function DaftarAnggotaPage() {
     if (res.ok) {
       setPesan("🎉 Pendaftaran berhasil! Mengarahkan ke halaman login...");
       setForm({ nama: "", alamat: "", no_telp: "", email: "", password: "" });
-
-      setTimeout(() => {
-        router.push("/login"); 
-      }, 1500);
+      setTimeout(() => router.push("/login"), 1500);
     } else {
       const result = await res.json();
       setPesan("❌ " + (result.message || "Terjadi kesalahan, coba lagi nanti."));
@@ -42,99 +39,121 @@ export default function DaftarAnggotaPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 to-sky-100 p-6">
-      <div className="w-full max-w-md bg-white shadow-2xl rounded-3xl p-10 border border-gray-200">
-        <h1 className="text-3xl font-extrabold text-center text-sky-700 mb-8">
-          Daftar Anggota Baru
-        </h1>
+    <main className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-sky-200 via-blue-100 to-blue-300">
+      {/* Background Awan */}
+      <div className="absolute inset-0 bg-[url('/clouds.svg')] bg-cover opacity-10"></div>
 
-        {pesan && (
-          <p
-            className={`text-center mb-6 font-medium ${
-              pesan.includes("berhasil") ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {pesan}
+      {/* Lapisan Blur Transparan */}
+      <div className="absolute inset-0 bg-white/30 backdrop-blur-md"></div>
+
+      {/* Konten Utama */}
+      <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto p-6">
+        {/* Kiri - Form Register */}
+        <div className="w-full md:w-1/2 bg-white/20 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-white/30">
+          {/* Logo */}
+          <div className="flex items-center mb-6">
+            <div className="w-3 h-3 bg-blue-600 rounded-sm mr-2"></div>
+            <span className="font-semibold text-blue-800 text-lg tracking-wide">
+              Perpustakaan
+            </span>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-3xl font-extrabold text-blue-900 mb-2">
+            Daftar Akun Baru ✨
+          </h1>
+          <p className="text-blue-700/80 mb-6 text-sm font-medium">
+            Yuk, buat akunmu dan mulai menjelajahi dunia pengetahuan!
           </p>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-gray-800 font-semibold mb-2">Nama Lengkap</label>
+          {/* Pesan */}
+          {pesan && (
+            <p
+              className={`text-center mb-4 font-medium ${
+                pesan.includes("berhasil") ? "text-green-700" : "text-red-700"
+              }`}
+            >
+              {pesan}
+            </p>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
               value={form.nama}
               onChange={(e) => setForm({ ...form, nama: e.target.value })}
-              placeholder="Masukkan Nama Lengkap"
+              placeholder="Nama Lengkap"
               required
-              className="w-full border border-gray-300 rounded-xl p-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent"
+              className="w-full border border-blue-300/40 bg-white/50 rounded-xl p-3 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
             />
-          </div>
-
-          <div>
-            <label className="block text-gray-800 font-semibold mb-2">Alamat</label>
             <input
               type="text"
               value={form.alamat}
               onChange={(e) => setForm({ ...form, alamat: e.target.value })}
-              placeholder="Masukkan Alamat Rumah"
+              placeholder="Alamat Rumah"
               required
-              className="w-full border border-gray-300 rounded-xl p-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent"
+              className="w-full border border-blue-300/40 bg-white/50 rounded-xl p-3 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
             />
-          </div>
-
-          <div>
-            <label className="block text-gray-800 font-semibold mb-2">No. Telepon</label>
             <input
               type="text"
               value={form.no_telp}
               onChange={(e) => setForm({ ...form, no_telp: e.target.value })}
-              placeholder="Masukkan Nomor Telepon"
-              className="w-full border border-gray-300 rounded-xl p-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent"
+              placeholder="Nomor Telepon"
+              className="w-full border border-blue-300/40 bg-white/50 rounded-xl p-3 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
             />
-          </div>
-
-          <div>
-            <label className="block text-gray-800 font-semibold mb-2">Email</label>
             <input
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="Masukkan Email"
+              placeholder="Alamat Email"
               required
-              className="w-full border border-gray-300 rounded-xl p-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent"
+              className="w-full border border-blue-300/40 bg-white/50 rounded-xl p-3 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
             />
-          </div>
-
-          <div>
-            <label className="block text-gray-800 font-semibold mb-2">Password</label>
             <input
               type="password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              placeholder="Masukkan Password"
+              placeholder="Kata Sandi"
               required
-              className="w-full border border-gray-300 rounded-xl p-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent"
+              className="w-full border border-blue-300/40 bg-white/50 rounded-xl p-3 text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
             />
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full font-bold py-3 rounded-xl text-white shadow-lg transition-all duration-300 ${
-              loading ? "bg-sky-400 cursor-not-allowed" : "bg-sky-600 hover:bg-sky-700"
-            }`}
-          >
-            {loading ? "Mendaftar..." : "Daftar Sekarang"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full font-semibold py-3 rounded-xl text-white shadow-md transition-all duration-300 ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-sky-600 hover:bg-sky-700 shadow-blue-200"
+              }`}
+            >
+              {loading ? "Mendaftar..." : "Daftar Sekarang"}
+            </button>
+          </form>
 
-        <p className="text-center text-gray-500 text-sm mt-6">
-          Sudah punya akun?{" "}
-          <a href="/login" className="text-sky-600 font-semibold hover:underline">
-            Masuk di sini
-          </a>
-        </p>
+          <p className="text-center text-blue-800 text-sm mt-8">
+            Sudah punya akun?{" "}
+            <a
+              href="/login"
+              className="text-sky-600 font-semibold hover:underline"
+            >
+              Masuk 
+            </a>
+          </p>
+        </div>
+
+        {/* Kanan - Ilustrasi Buku */}
+        <div className="hidden md:flex w-1/2 justify-center items-center relative">
+          <div className="absolute w-80 h-80 bg-sky-400/30 blur-3xl rounded-full -top-16 right-0"></div>
+          <Image
+            src="/book-character.jpg"
+            alt="Ilustrasi daftar anggota"
+            width={450}
+            height={450}
+            className="relative z-10 rounded-3xl drop-shadow-2xl"
+          />
+        </div>
       </div>
     </main>
   );

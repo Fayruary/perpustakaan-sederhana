@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Swal from "sweetalert2";
 
 export default function BukuPage() {
   const [buku, setBuku] = useState([]);
@@ -12,12 +14,11 @@ export default function BukuPage() {
     penerbit: "",
     tahun_terbit: "",
     kategori: "",
-    stok: 1
+    stok: 1,
   });
-  const [stokTambah, setStokTambah] = useState({}); // id_buku: jumlah
+  const [stokTambah, setStokTambah] = useState({});
   const router = useRouter();
 
-  // Ambil daftar buku dari API
   useEffect(() => {
     const r = localStorage.getItem("role");
     setRole(r);
@@ -29,12 +30,31 @@ export default function BukuPage() {
     }
     fetchBuku();
   }, []);
+const handlePinjam = async (id_buku) => {
+  const id_anggota = Number(localStorage.getItem("id_anggota"));
 
-  // Fungsi pinjam buku (siswa)
-  const handlePinjam = async (id_buku) => {
-    const id_anggota = Number(localStorage.getItem("id_anggota"));
-    if (!id_anggota) { alert("Login dulu!"); router.push("/login"); return; }
+  if (!id_anggota) {
+    await Swal.fire({
+      icon: "warning",
+      title: "Harap Login",
+      text: "Anda harus login terlebih dahulu untuk meminjam buku.",
+      confirmButtonColor: "#2563eb",
+      background: "rgba(255,255,255,0.85)",
+      color: "#1e3a8a",
+      backdrop: `
+        rgba(0,0,0,0.3)
+        url("/clouds.svg")
+        center top
+        no-repeat
+      `,
+      customClass: {
+        popup: "rounded-3xl shadow-2xl backdrop-blur-xl border border-white/30",
+      },
+    });
 
+    router.push("/login"); 
+    return;
+  }
     try {
       const res = await fetch("/api/peminjaman", {
         method: "POST",
@@ -43,13 +63,15 @@ export default function BukuPage() {
       });
       const result = await res.json();
       setPesan(result.message);
-      setTimeout(() => { setPesan(""); router.push("/peminjaman"); }, 1500);
-    } catch (error) {
+      setTimeout(() => {
+        setPesan("");
+        router.push("/peminjaman");
+      }, 1500);
+    } catch {
       setPesan("❌ Terjadi kesalahan saat meminjam buku.");
     }
   };
 
-  // Fungsi tambah stok (admin)
   const handleTambahStok = async (id_buku) => {
     const jumlah = Number(stokTambah[id_buku]);
     if (!jumlah || jumlah <= 0) return;
@@ -58,21 +80,19 @@ export default function BukuPage() {
       const res = await fetch(`/api/buku`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id_buku, stok: jumlah })
+        body: JSON.stringify({ id_buku, stok: jumlah }),
       });
       const result = await res.json();
       setPesan(result.message);
 
-      // refresh daftar buku
       const resBuku = await fetch("/api/buku");
       const dataBuku = await resBuku.json();
       setBuku(dataBuku);
-    } catch (error) {
+    } catch {
       setPesan("❌ Gagal menambahkan stok.");
     }
   };
 
-  // Fungsi tambah buku baru (admin)
   const handleTambahBuku = async (e) => {
     e.preventDefault();
     try {
@@ -83,87 +103,168 @@ export default function BukuPage() {
       });
       const result = await res.json();
       setPesan(result.message);
-      setFormTambah({ judul: "", pengarang: "", penerbit: "", tahun_terbit: "", kategori: "", stok: 1 });
+      setFormTambah({
+        judul: "",
+        pengarang: "",
+        penerbit: "",
+        tahun_terbit: "",
+        kategori: "",
+        stok: 1,
+      });
 
-      // refresh daftar buku
       const resBuku = await fetch("/api/buku");
       const dataBuku = await resBuku.json();
       setBuku(dataBuku);
-    } catch (error) {
+    } catch {
       setPesan("❌ Gagal menambahkan buku baru.");
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-100 to-sky-50 p-8">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-sky-900 mb-6 text-center">
-          Daftar Buku Perpustakaan 📖
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 text-gray-800 relative overflow-hidden">
+      {/* Background awan lembut */}
+      <div className="absolute inset-0 bg-[url('/clouds.svg')] bg-cover opacity-10"></div>
+
+      
+      {/* Navbar */}
+      <header className="flex items-center justify-between px-6 md:px-16 py-5 bg-blue-200/70 backdrop-blur-md shadow-md fixed w-full z-50">
+        {/* Logo */}
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => router.push("/")}
+        >
+          <div className="w-6 h-6 bg-blue-600 rounded-sm"></div>
+          <span className="text-lg font-semibold text-blue-700">
+            Perpustakaan
+          </span>
+        </div>
+
+        {/* Navigasi utama */}
+        <nav className="hidden md:flex gap-8 font-medium text-gray-700">
+          <button
+            onClick={() => router.push("/")}
+            className="hover:text-blue-600 transition"
+          >
+            Beranda
+          </button>
+          <button>
+            Buku
+          </button>
+          <button>
+            Peminjaman
+          </button>
+        </nav>
+
+        <div className="hidden md:flex gap-4">
+          <Link
+            href="/profil"
+            className="px-5 py-2 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-all duration-300"
+          >
+            Profil
+          </Link>
+        </div>
+      </header>
+
+      {/* Konten utama */}
+      <div className="max-w-6xl mx-auto relative z-10 pt-32 px-4 md:px-6 pb-16">
+        <h1 className="text-4xl font-bold text-center text-blue-900 mb-10 drop-shadow">
+          Daftar Buku Perpustakaan 📚
         </h1>
 
         {pesan && (
-          <p className="text-center font-medium mb-6 text-green-800">{pesan}</p>
+          <p className="text-center text-green-700 font-semibold mb-8">
+            {pesan}
+          </p>
         )}
 
-        {/* Form tambah buku baru */}
+        {/* Form Tambah Buku (Admin) */}
         {role === "admin" && (
-          <div className="bg-white shadow-lg rounded-xl p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">Tambah Buku Baru</h2>
-            <form onSubmit={handleTambahBuku} className="grid gap-3 md:grid-cols-2">
-              <input type="text" placeholder="Judul" className="p-2 border rounded placeholder-gray-500 text-gray-800"
-                value={formTambah.judul} onChange={e => setFormTambah({...formTambah, judul: e.target.value})} required />
-              <input type="text" placeholder="Pengarang" className="p-2 border rounded placeholder-gray-500 text-gray-800"
-                value={formTambah.pengarang} onChange={e => setFormTambah({...formTambah, pengarang: e.target.value})} required />
-              <input type="text" placeholder="Penerbit" className="p-2 border rounded placeholder-gray-500 text-gray-800"
-                value={formTambah.penerbit} onChange={e => setFormTambah({...formTambah, penerbit: e.target.value})} required />
-              <input type="number" placeholder="Tahun Terbit" className="p-2 border rounded placeholder-gray-500 text-gray-800"
-                value={formTambah.tahun_terbit} onChange={e => setFormTambah({...formTambah, tahun_terbit: e.target.value})} required />
-              <input type="text" placeholder="Kategori" className="p-2 border rounded placeholder-gray-500 text-gray-800"
-                value={formTambah.kategori} onChange={e => setFormTambah({...formTambah, kategori: e.target.value})} />
-              <input type="number" placeholder="Stok" className="p-2 border rounded placeholder-gray-500 text-gray-800"
-                value={formTambah.stok} min={1}
-                onChange={e => setFormTambah({...formTambah, stok: e.target.value})} required />
-              <button type="submit" className="bg-sky-700 hover:bg-sky-800 text-white py-2 rounded col-span-2">Tambah Buku</button>
+          <div className="bg-white/30 backdrop-blur-2xl border border-white/40 shadow-xl rounded-2xl p-8 mb-12 transition-all hover:shadow-2xl">
+            <h2 className="text-2xl font-semibold text-blue-900 mb-6">
+              ➕ Tambah Buku Baru
+            </h2>
+            <form
+              onSubmit={handleTambahBuku}
+              className="grid gap-4 md:grid-cols-2"
+            >
+              {["judul", "pengarang", "penerbit", "tahun_terbit", "kategori", "stok"].map((field, i) => (
+                <input
+                  key={i}
+                  type={field === "tahun_terbit" || field === "stok" ? "number" : "text"}
+                  placeholder={field.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                  className="p-3 border border-white/40 rounded-xl bg-white/40 focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-800 placeholder-gray-600"
+                  value={formTambah[field]}
+                  onChange={(e) =>
+                    setFormTambah({ ...formTambah, [field]: e.target.value })
+                  }
+                  required
+                />
+              ))}
+              <button
+                type="submit"
+                className="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-all shadow-md"
+              >
+                Tambah Buku
+              </button>
             </form>
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 gap-6">
+        {/* Daftar Buku */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {buku.map((item) => (
             <div
               key={item.id_buku}
-              className="bg-white shadow-lg rounded-xl p-5 border border-gray-100 hover:shadow-2xl transition-all"
+              className="bg-white/30 backdrop-blur-2xl shadow-lg hover:shadow-2xl border border-white/40 rounded-2xl p-6 transition-all text-gray-800"
             >
-              <h2 className="text-xl font-semibold text-gray-900">{item.judul}</h2>
-              <p className="text-gray-800 mt-1">📖 Pengarang: <span className="font-medium">{item.pengarang}</span></p>
-              <p className="text-gray-800">🏢 Penerbit: <span className="font-medium">{item.penerbit}</span></p>
-              <p className="text-gray-800">📅 Tahun: <span className="font-medium">{item.tahun_terbit}</span></p>
-              <p className="text-gray-800">🏷️ Kategori: <span className="font-medium">{item.kategori}</span></p>
-              <p className="text-gray-800">📦 Stok: <span className={`font-semibold ${item.stok > 0 ? "text-green-700" : "text-red-700"}`}>
-                {item.stok > 0 ? `${item.stok} tersedia` : "Habis"}
-              </span></p>
+              <h2 className="text-xl font-semibold text-blue-900 mb-2">
+                {item.judul}
+              </h2>
+              <p>✍️ Pengarang: {item.pengarang}</p>
+              <p>🏢 Penerbit: {item.penerbit}</p>
+              <p>📅 Tahun: {item.tahun_terbit}</p>
+              <p>🏷️ Kategori: {item.kategori}</p>
+              <p className="mb-4">
+                📦 Stok:{" "}
+                <span
+                  className={`font-semibold ${
+                    item.stok > 0 ? "text-green-700" : "text-red-700"
+                  }`}
+                >
+                  {item.stok > 0 ? `${item.stok} tersedia` : "Habis"}
+                </span>
+              </p>
 
-              {/* Tombol tambah stok admin */}
-              {role === "admin" && (
-                <div className="mt-3 flex gap-2">
-                  <input type="number" min={1} placeholder="Tambah stok"
-                    className="border p-1 rounded w-24 placeholder-gray-500 text-gray-800"
+              {role === "admin" ? (
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    min={1}
+                    placeholder="0"
+                    className="border border-white/40 rounded-lg p-2 w-20 bg-white/40 focus:ring-2 focus:ring-blue-400 focus:outline-none"
                     value={stokTambah[item.id_buku] || ""}
-                    onChange={e => setStokTambah({...stokTambah, [item.id_buku]: e.target.value})} />
-                  <button className="bg-blue-700 hover:bg-blue-800 text-white px-3 rounded"
-                    onClick={() => handleTambahStok(item.id_buku)}>
-                    Tambah Stok
+                    onChange={(e) =>
+                      setStokTambah({
+                        ...stokTambah,
+                        [item.id_buku]: e.target.value,
+                      })
+                    }
+                  />
+                  <button
+                    onClick={() => handleTambahStok(item.id_buku)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all"
+                  >
+                    Tambah
                   </button>
                 </div>
-              )}
-
-              {/* Tombol pinjam siswa */}
-              {role !== "admin" && (
+              ) : (
                 <button
                   onClick={() => handlePinjam(item.id_buku)}
                   disabled={item.stok === 0}
-                  className={`mt-4 w-full rounded-lg py-2 font-semibold text-white transition-all ${
-                    item.stok === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-sky-700 hover:bg-sky-800"
+                  className={`w-full mt-2 py-3 rounded-xl font-semibold text-white transition-all ${
+                    item.stok === 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700"
                   }`}
                 >
                   {item.stok === 0 ? "Stok Habis" : "Pinjam Buku"}
@@ -174,7 +275,9 @@ export default function BukuPage() {
         </div>
 
         {buku.length === 0 && (
-          <p className="text-center text-gray-700 mt-10">Tidak ada data buku 😢</p>
+          <p className="text-center text-gray-600 mt-10">
+            Tidak ada data buku 😢
+          </p>
         )}
       </div>
     </main>
