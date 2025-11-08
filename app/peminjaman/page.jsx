@@ -8,9 +8,10 @@ export default function PeminjamanPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // untuk burger menu
   const router = useRouter();
 
-    useEffect(() => {
+  useEffect(() => {
     const r = localStorage.getItem("role");
     const id_anggota = localStorage.getItem("id_anggota");
 
@@ -76,25 +77,91 @@ export default function PeminjamanPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 relative overflow-hidden">
       {/* Navbar */}
-      <header className="flex items-center justify-between px-8 md:px-16 py-5 bg-blue-200/70 backdrop-blur-md shadow-md fixed w-full z-50">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/")}>
-          <div className="w-6 h-6 bg-blue-600 rounded-sm"></div>
-          <span className="text-lg font-semibold text-blue-700">Perpustakaan</span>
-        </div>
-
-        <nav className="hidden md:flex gap-8 font-medium text-gray-700">
-          <Link href="/" className="hover:text-blue-600 transition">Beranda</Link>
-          <Link href="/buku" className="hover:text-blue-600 transition">Buku</Link>
-          <Link href="/peminjaman" className="hover:text-blue-600 transition">Peminjaman</Link>
-        </nav>
-
-        <div className="hidden md:flex gap-3">
-          <Link
-            href="/profil"
-            className="px-4 py-2 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-all duration-300 text-sm md:text-base"
+      <header className="fixed w-full z-50 flex justify-center mt-4">
+        <div className="bg-blue-200/70 backdrop-blur-md shadow-md rounded-xl max-w-4xl w-full px-4 md:px-8 py-3 flex items-center justify-between">
+          {/* Logo */}
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => router.push("/")}
           >
-            Profil
-          </Link>
+            <div className="w-5 h-5 bg-blue-600 rounded-sm"></div>
+            <span className="text-base md:text-lg font-semibold text-blue-700">
+              Perpustakaan
+            </span>
+          </div>
+
+          {/* Navigasi Desktop */}
+          <div className="hidden md:flex gap-2">
+            <Link
+              href="/buku"
+              className="px-4 py-2 bg-white text-blue-600 rounded-2xl font-medium transition-all duration-300 text-sm md:text-base"
+            >
+              Buku
+            </Link>
+            <Link
+              href="/peminjaman"
+              className="px-4 py-2 bg-white text-blue-600 rounded-2xl font-medium transition-all duration-300 text-sm md:text-base"
+            >
+              Peminjaman
+            </Link>
+            <Link
+              href="/profil"
+              className="px-4 py-2 bg-white text-blue-600 rounded-2xl font-medium transition-all duration-300 text-sm md:text-base"
+            >
+              Profil
+            </Link>
+          </div>
+
+          {/* Navigasi Mobile (Burger) */}
+          <div className="md:hidden relative">
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="p-2 rounded-md focus:outline-none bg-white/40 hover:bg-white/60 transition"
+            >
+              {/* Icon burger */}
+              <svg
+                className="w-6 h-6 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+
+            {/* Menu dropdown */}
+            {mobileMenuOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white/80 backdrop-blur-md rounded-xl shadow-lg flex flex-col">
+                <Link
+                  href="/buku"
+                  className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Buku
+                </Link>
+                <Link
+                  href="/peminjaman"
+                  className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Peminjaman
+                </Link>
+                <Link
+                  href="/profil"
+                  className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Profil
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -125,7 +192,10 @@ export default function PeminjamanPage() {
                 </thead>
                 <tbody>
                   {data.map((p) => (
-                    <tr key={p.id_pinjam} className="text-center border-t text-gray-700 hover:bg-white/40 transition-all">
+                    <tr
+                      key={p.id_pinjam}
+                      className="text-center border-t text-gray-700 hover:bg-white/40 transition-all"
+                    >
                       <td className="p-3">{p.id_pinjam}</td>
                       <td className="p-3">{p.nama}</td>
                       <td className="p-3 font-medium text-blue-800">{p.judul}</td>
