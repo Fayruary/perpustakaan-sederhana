@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 
+// 🔹 Tambahkan ini supaya route bersifat dynamic
+export const dynamic = "force-dynamic";
+
 async function connectDB() {
   return await mysql.createConnection({
     host: "localhost",
@@ -82,7 +85,6 @@ export async function PATCH(req) {
     }
 
     const db = await connectDB();
-    // Update stok: stok lama + stok baru
     await db.query(`UPDATE buku SET stok = stok + ? WHERE id_buku = ?`, [stok, id_buku]);
     await db.end();
 
