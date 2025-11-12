@@ -54,7 +54,7 @@ export default function DaftarAnggotaPage() {
           <div className="flex items-center mb-6">
             <div className="w-3 h-3 bg-blue-600 rounded-sm mr-2"></div>
             <span className="font-semibold text-blue-800 text-lg tracking-wide">
-              Perpustakaan
+              JendelaDunia
             </span>
           </div>
 

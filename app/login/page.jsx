@@ -52,9 +52,9 @@ export default function LoginPage() {
 
         // ✅ Redirect berdasarkan role
         if (result.status === "admin") {
-          router.push("/peminjaman");
+          router.push("/home");
         } else {
-          router.push("/buku");
+          router.push("/home");
         }
       } else {
         Swal.fire({
@@ -98,7 +98,7 @@ export default function LoginPage() {
           <div className="flex items-center mb-6">
             <div className="w-3 h-3 bg-blue-600 rounded-sm mr-2"></div>
             <span className="font-semibold text-blue-800 text-lg tracking-wide">
-              Perpustakaan
+              JendelaDunia
             </span>
           </div>
 

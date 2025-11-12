@@ -73,7 +73,7 @@ export default function HomePage() {
 
     {/* Navigasi utama */}
     <nav className="hidden md:flex gap-6 font-medium text-gray-700">
-      <button onClick={() => router.push("/")} className="hover:text-blue-600 transition">Beranda</button>
+      <button onClick={() => router.push("/home")} disabled={isLoggedIn === null} className={`hover:text-blue-600 transition ${isLoggedIn === null ? "opacity-50 cursor-not-allowed" : ""}`}>Beranda</button>
       <button onClick={() => handleProtectedNav("/buku")} disabled={isLoggedIn === null} className={`hover:text-blue-600 transition ${isLoggedIn === null ? "opacity-50 cursor-not-allowed" : ""}`}>Buku</button>
       <button onClick={() => handleProtectedNav("/peminjaman")} disabled={isLoggedIn === null} className={`hover:text-blue-600 transition ${isLoggedIn === null ? "opacity-50 cursor-not-allowed" : ""}`}>Peminjaman</button>
     </nav>

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import { Menu, X } from "lucide-react";
+
 
 export default function BukuPage() {
   const [buku, setBuku] = useState([]);
@@ -131,85 +133,49 @@ export default function BukuPage() {
       <header className="fixed w-full z-50 flex justify-center mt-4">
         <div className="bg-blue-200/70 backdrop-blur-md shadow-md rounded-xl max-w-4xl w-full px-4 md:px-8 py-3 flex items-center justify-between">
           {/* Logo */}
-          <div
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => router.push("/")}
-          >
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/")}>
             <div className="w-5 h-5 bg-blue-600 rounded-sm"></div>
-            <span className="text-base md:text-lg font-semibold text-blue-700">
-              Perpustakaan
-            </span>
+            <span className="text-base md:text-lg font-semibold text-blue-700">JendelaDunia</span>
           </div>
 
-          {/* Navigasi Desktop */}
-          <div className="hidden md:flex gap-2">
-            <Link
-              href="/buku"
-              className="px-4 py-2 bg-white text-blue-600 rounded-2xl font-medium transition-all duration-300 text-sm md:text-base"
-            >
-              Buku
-            </Link>
-            <Link
-              href="/peminjaman"
-              className="px-4 py-2 bg-white text-blue-600 rounded-2xl font-medium transition-all duration-300 text-sm md:text-base"
-            >
-              Peminjaman
-            </Link>
-            <Link
-              href="/profil"
-              className="px-4 py-2 bg-white text-blue-600 rounded-2xl font-medium transition-all duration-300 text-sm md:text-base"
-            >
-              Profil
-            </Link>
-          </div>
+        <div className="hidden md:flex items-center justify-between w-full">
+  {/* Kosong di kiri agar tombol tetap di tengah */}
+  <div className="w-1/6"></div>
 
-          {/* Navigasi Mobile (Burger) */}
+  {/* Navigasi tengah */}
+  <nav className="flex gap-10 font-medium text-gray-700 justify-center w-1/3">
+    <button onClick={() => router.push("/home")} className="hover:text-blue-600 transition">Beranda</button>
+    <button onClick={() => router.push("/buku")} className="hover:text-blue-600 transition">Buku</button>
+    <button onClick={() => router.push("/peminjaman")} className="hover:text-blue-600 transition">Peminjaman</button>
+  </nav>
+
+  {/* Tombol Profil di kanan */}
+  <div className="flex justify-end w-1/3">
+    <button
+      onClick={() => router.push("/profil")}
+      className="px-4 py-2 bg-white text-blue-600 rounded-2xl font-medium transition"
+    >
+      Profil
+    </button>
+  </div>
+</div>
+
+
+          {/* Mobile Burger */}
           <div className="md:hidden relative">
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               className="p-2 rounded-md focus:outline-none bg-white/40 hover:bg-white/60 transition"
             >
-              {/* Icon burger */}
-              <svg
-                className="w-6 h-6 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+              {mobileMenuOpen ? <X className="w-6 h-6 text-blue-600" /> : <Menu className="w-6 h-6 text-blue-600" />}
             </button>
 
-            {/* Menu dropdown */}
             {mobileMenuOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white/80 backdrop-blur-md rounded-xl shadow-lg flex flex-col">
-                <Link
-                  href="/buku"
-                  className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Buku
-                </Link>
-                <Link
-                  href="/peminjaman"
-                  className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Peminjaman
-                </Link>
-                <Link
-                  href="/profil"
-                  className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Profil
-                </Link>
+              <div className="absolute right-0 mt-2 w-48 bg-white/80 backdrop-blur-md rounded-xl shadow-lg flex flex-col p-4 gap-2">
+                <button onClick={() => { router.push("/home"); setMobileMenuOpen(false); }} className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg text-left">Beranda</button>
+                <button onClick={() => { router.push("/buku"); setMobileMenuOpen(false); }} className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg text-left">Buku</button>
+                <button onClick={() => { router.push("/peminjaman"); setMobileMenuOpen(false); }} className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg text-left">Peminjaman</button>
+                <button onClick={() => { router.push("/profil"); setMobileMenuOpen(false); }} className="px-4 py-2 text-blue-600 hover:bg-blue-100 rounded-lg text-left">Profil</button>
               </div>
             )}
           </div>
@@ -219,7 +185,7 @@ export default function BukuPage() {
       {/* Konten utama */}
       <div className="max-w-6xl mx-auto relative z-10 pt-32 px-4 md:px-6 pb-16">
         <h1 className="text-4xl font-bold text-center text-blue-900 mb-10 drop-shadow">
-          Daftar Buku Perpustakaan 📚
+          Daftar Buku Perpustakaan 
         </h1>
 
         {pesan && (
@@ -273,12 +239,12 @@ export default function BukuPage() {
               <h2 className="text-xl font-semibold text-blue-900 mb-2">
                 {item.judul}
               </h2>
-              <p>✍️ Pengarang: {item.pengarang}</p>
-              <p>🏢 Penerbit: {item.penerbit}</p>
-              <p>📅 Tahun: {item.tahun_terbit}</p>
-              <p>🏷️ Kategori: {item.kategori}</p>
+              <p>Pengarang: {item.pengarang}</p>
+              <p>Penerbit: {item.penerbit}</p>
+              <p>Tahun: {item.tahun_terbit}</p>
+              <p>Kategori: {item.kategori}</p>
               <p className="mb-4">
-                📦 Stok:{" "}
+                Stok:{" "}
                 <span
                   className={`font-semibold ${
                     item.stok > 0 ? "text-green-700" : "text-red-700"
