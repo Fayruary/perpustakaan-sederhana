@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import { cookies } from "next/headers";
 
-
 // CONNECT DB
 async function connectDB() {
   return await mysql.createConnection({
@@ -69,7 +68,10 @@ export async function POST(req) {
     );
 
     if (bukuRows.length === 0)
-      return NextResponse.json({ error: "Buku tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Buku tidak ditemukan" },
+        { status: 404 }
+      );
 
     if (bukuRows[0].stok <= 0)
       return NextResponse.json({ error: "Stok habis" }, { status: 400 });
@@ -94,7 +96,6 @@ export async function POST(req) {
   }
 }
 
-
 // PATCH → admin menyetujui / menolak
 export async function PATCH(req) {
   try {
@@ -110,7 +111,10 @@ export async function PATCH(req) {
     );
 
     if (rows.length === 0)
-      return NextResponse.json({ error: "Data tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Data tidak ditemukan" },
+        { status: 404 }
+      );
 
     const id_buku = rows[0].id_buku;
 
@@ -133,8 +137,6 @@ export async function PATCH(req) {
   }
 }
 
-
-
 // PUT → siswa mengembalikan buku
 export async function PUT(req) {
   try {
@@ -151,7 +153,10 @@ export async function PUT(req) {
     const { id_pinjam } = await req.json();
 
     if (!id_pinjam)
-      return NextResponse.json({ error: "ID peminjaman wajib" }, { status: 400 });
+      return NextResponse.json(
+        { error: "ID peminjaman wajib" },
+        { status: 400 }
+      );
 
     const db = await connectDB();
 
@@ -161,7 +166,10 @@ export async function PUT(req) {
     );
 
     if (rows.length === 0)
-      return NextResponse.json({ error: "Peminjaman tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Peminjaman tidak ditemukan" },
+        { status: 404 }
+      );
 
     const { id_buku, status } = rows[0];
 

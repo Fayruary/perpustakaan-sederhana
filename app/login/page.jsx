@@ -29,7 +29,6 @@ export default function LoginPage() {
         localStorage.setItem("nama", result.nama);
         localStorage.setItem("role", result.status);
 
-
         // ✅ SweetAlert Success
         await Swal.fire({
           icon: "success",
@@ -141,7 +140,9 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
               className={`w-full ${
-                loading ? "bg-sky-400 cursor-not-allowed" : "bg-sky-600 hover:bg-sky-700"
+                loading
+                  ? "bg-sky-400 cursor-not-allowed"
+                  : "bg-sky-600 hover:bg-sky-700"
               } text-white font-semibold py-3 rounded-xl transition-all shadow-md`}
             >
               {loading ? "Memproses..." : "Masuk"}

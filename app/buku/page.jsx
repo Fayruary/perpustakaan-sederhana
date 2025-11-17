@@ -3,8 +3,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
-import { BookOpen, ClipboardList, FileText, LogOut, Home, Menu, X, User } from "lucide-react";
-import SearchFilter from "../components/Seacrh"
+import {
+  BookOpen,
+  ClipboardList,
+  LogOut,
+  Home,
+  Menu,
+  X,
+  User,
+  Heart,
+  MessageSquare,
+} from "lucide-react";
+import SearchFilter from "../components/Seacrh";
 
 export default function BukuPage() {
   const [buku, setBuku] = useState([]);
@@ -12,11 +22,8 @@ export default function BukuPage() {
   const [role, setRole] = useState("");
   const [nama, setNama] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  // Search + Filter
   const [search, setSearch] = useState("");
   const [kategoriFilter, setKategoriFilter] = useState("");
-
   const [formTambah, setFormTambah] = useState({
     judul: "",
     pengarang: "",
@@ -25,16 +32,22 @@ export default function BukuPage() {
     kategori: "",
     stok: 1,
   });
-
   const [stokTambah, setStokTambah] = useState({});
+  const [wishlist, setWishlist] = useState([]);
   const router = useRouter();
 
-  // Ambil role + nama + data buku
+  // Ambil data awal: role, nama, buku, wishlist per user
   useEffect(() => {
     const r = localStorage.getItem("role");
     const n = localStorage.getItem("nama");
+    const idAnggota = localStorage.getItem("id_anggota");
+    const wl = JSON.parse(
+      localStorage.getItem(`wishlist_${idAnggota}`) || "[]"
+    );
+
     setRole(r);
     setNama(n);
+    setWishlist(wl);
 
     async function fetchBuku() {
       const res = await fetch("/api/buku");
@@ -43,9 +56,24 @@ export default function BukuPage() {
     fetchBuku();
   }, []);
 
-  // --------------------------
-  // PINJAM
-  // --------------------------
+  // Toggle wishlist per user
+  const handleToggleWishlist = (id_buku) => {
+    const idAnggota = localStorage.getItem("id_anggota");
+    let updatedWishlist;
+    if (wishlist.includes(id_buku)) {
+      updatedWishlist = wishlist.filter((id) => id !== id_buku);
+    } else {
+      updatedWishlist = [...wishlist, id_buku];
+    }
+
+    setWishlist(updatedWishlist);
+    localStorage.setItem(
+      `wishlist_${idAnggota}`,
+      JSON.stringify(updatedWishlist)
+    );
+  };
+
+  // Pinjam buku (siswa)
   const handlePinjam = async (id_buku) => {
     const id_anggota = Number(localStorage.getItem("id_anggota"));
     if (!id_anggota) {
@@ -77,36 +105,9 @@ export default function BukuPage() {
     }
   };
 
-  // --------------------------
-  // TAMBAH STOK
-  // --------------------------
-  const handleTambahStok = async (id_buku) => {
-    const jumlah = Number(stokTambah[id_buku]);
-    if (!jumlah || jumlah <= 0) return;
-
-    try {
-      const res = await fetch(`/api/buku`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id_buku, stok: jumlah }),
-      });
-
-      const result = await res.json();
-      setPesan(result.message);
-
-      const resBuku = await fetch("/api/buku");
-      setBuku(await resBuku.json());
-    } catch {
-      setPesan("Gagal menambahkan stok.");
-    }
-  };
-
-  // --------------------------
-  // TAMBAH BUKU
-  // --------------------------
+  // Tambah buku (admin)
   const handleTambahBuku = async (e) => {
     e.preventDefault();
-
     try {
       const res = await fetch("/api/buku", {
         method: "POST",
@@ -133,9 +134,29 @@ export default function BukuPage() {
     }
   };
 
-  // --------------------------
-  // HAPUS
-  // --------------------------
+  // Tambah stok (admin)
+  const handleTambahStok = async (id_buku) => {
+    const jumlah = Number(stokTambah[id_buku]);
+    if (!jumlah || jumlah <= 0) return;
+
+    try {
+      const res = await fetch(`/api/buku`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_buku, stok: jumlah }),
+      });
+
+      const result = await res.json();
+      setPesan(result.message);
+
+      const resBuku = await fetch("/api/buku");
+      setBuku(await resBuku.json());
+    } catch {
+      setPesan("Gagal menambahkan stok.");
+    }
+  };
+
+  // Hapus buku (admin)
   const handleHapusBuku = async (id_buku) => {
     const konfirmasi = await Swal.fire({
       icon: "warning",
@@ -166,48 +187,69 @@ export default function BukuPage() {
     }
   };
 
-  // --------------------------
-  // SEARCH + FILTER
-  // --------------------------
+  // Filter search + kategori
   const kategoriList = [...new Set(buku.map((b) => b.kategori))];
-
   const filteredBooks = buku.filter((b) => {
     const cocokSearch = b.judul.toLowerCase().includes(search.toLowerCase());
     const cocokKategori = kategoriFilter ? b.kategori === kategoriFilter : true;
     return cocokSearch && cocokKategori;
   });
 
-  // --------------------------
-  // SIDEBAR
-  // --------------------------
+  // Sidebar
   const SidebarContent = (
     <div className="flex flex-col justify-between h-full">
       <div>
-        <h1 className="text-2xl font-bold text-blue-800 mb-8">JendelaDunia</h1>
-
-        <nav className="space-y-3">
-          <Link href="/home" className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/60 text-blue-700 shadow hover:bg-white">
+        <h1 className="text-2xl font-bold text-blue-800 mb-8 text-start">
+          JendelaDunia
+        </h1>
+        <nav className="flex flex-col">
+          <Link
+            href="/home"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
+          >
             <Home className="w-5 h-5" /> Beranda
           </Link>
-
-          <Link href="/buku" className="flex items-center gap-3 px-4 py-2 rounded-xl bg-blue-600 text-white shadow">
+          <Link
+            href="/buku"
+            className="flex items-center gap-3 py-3 px-4 text-white bg-blue-600 rounded-r-full hover:bg-blue-700 transition"
+          >
             <BookOpen className="w-5 h-5" /> Buku
           </Link>
-
-          <Link href="/peminjaman" className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/60 text-blue-700 shadow hover:bg-white">
+          <Link
+            href="/peminjaman"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
+          >
             <ClipboardList className="w-5 h-5" /> Peminjaman
           </Link>
-
-          <Link href="/profile" className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/60 text-blue-700 shadow hover:bg-white">
+          <Link
+            href="/wishlist"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
+          >
+            <Heart className="w-5 h-5" /> Wishlist
+          </Link>
+          <Link
+            href="/forum"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
+          >
+            <MessageSquare className="w-5 h-5" /> Forum
+          </Link>
+          <Link
+            href="/profile"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
+          >
             <User className="w-5 h-5" /> Profile
           </Link>
         </nav>
       </div>
-
       <div>
-        <p className="text-blue-900 font-semibold mb-3 text-center">{nama} ({role})</p>
+        <p className="text-blue-900 font-semibold mb-3 text-center">
+          {nama} ({role})
+        </p>
         <button
-          onClick={() => { localStorage.clear(); router.push("/login"); }}
+          onClick={() => {
+            localStorage.clear();
+            router.push("/login");
+          }}
           className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white rounded-xl py-2 shadow"
         >
           <LogOut className="w-5 h-5" /> Logout
@@ -218,13 +260,12 @@ export default function BukuPage() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-sky-50 to-blue-100">
-
       {/* Sidebar Desktop */}
       <aside className="hidden md:flex w-64 fixed h-full bg-blue-200/70 backdrop-blur-md shadow-lg p-6">
         {SidebarContent}
       </aside>
 
-      {/* Tombol Hamburger */}
+      {/* Hamburger Mobile */}
       {!sidebarOpen && (
         <button
           className="md:hidden fixed top-5 left-5 bg-blue-700 text-white p-3 rounded-xl shadow-lg z-50"
@@ -246,22 +287,21 @@ export default function BukuPage() {
         >
           <X className="w-5 h-5 text-blue-900" />
         </button>
-
         {SidebarContent}
       </aside>
 
-      {/* KONTEN */}
+      {/* Konten */}
       <main className="flex-1 md:ml-64 p-10">
-
         <h1 className="text-4xl font-bold text-blue-900 text-center mb-10 drop-shadow">
           Daftar Buku Perpustakaan
         </h1>
 
         {pesan && (
-          <p className="text-center text-green-700 font-semibold mb-8">{pesan}</p>
+          <p className="text-center text-green-700 font-semibold mb-8">
+            {pesan}
+          </p>
         )}
 
-        {/* SEARCH + FILTER COMPONENT */}
         <SearchFilter
           search={search}
           setSearch={setSearch}
@@ -270,25 +310,42 @@ export default function BukuPage() {
           kategoriList={kategoriList}
         />
 
-        {/* FORM TAMBAH BUKU (ADMIN) */}
+        {/* FORM TAMBAH BUKU ADMIN */}
         {role === "admin" && (
           <div className="bg-white/30 backdrop-blur-xl border border-white/40 rounded-2xl shadow-xl p-8 mb-12">
-            <h2 className="text-2xl font-semibold text-blue-900 mb-6">Tambah Buku Baru</h2>
-
-            <form onSubmit={handleTambahBuku} className="grid md:grid-cols-2 gap-4">
-              {["judul","pengarang","penerbit","tahun_terbit","kategori","stok"].map((field, i) => (
+            <h2 className="text-2xl font-semibold text-blue-900 mb-6">
+              Tambah Buku Baru
+            </h2>
+            <form
+              onSubmit={handleTambahBuku}
+              className="grid md:grid-cols-2 gap-4"
+            >
+              {[
+                "judul",
+                "pengarang",
+                "penerbit",
+                "tahun_terbit",
+                "kategori",
+                "stok",
+              ].map((field, i) => (
                 <input
                   key={i}
-                  type={["tahun_terbit","stok"].includes(field) ? "number" : "text"}
-                  placeholder={field.replace("_"," ").toUpperCase()}
+                  type={
+                    ["tahun_terbit", "stok"].includes(field) ? "number" : "text"
+                  }
+                  placeholder={field.replace("_", " ").toUpperCase()}
                   value={formTambah[field]}
-                  onChange={(e) => setFormTambah({ ...formTambah, [field]: e.target.value })}
+                  onChange={(e) =>
+                    setFormTambah({ ...formTambah, [field]: e.target.value })
+                  }
                   className="p-3 border border-white/50 rounded-xl bg-white/40 text-blue-900 placeholder-blue-700/60"
                   required
                 />
               ))}
-
-              <button type="submit" className="md:col-span-2 bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-semibold shadow-lg">
+              <button
+                type="submit"
+                className="md:col-span-2 bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-semibold shadow-lg"
+              >
                 Tambah Buku
               </button>
             </form>
@@ -300,30 +357,53 @@ export default function BukuPage() {
           {filteredBooks.map((item) => (
             <div
               key={item.id_buku}
-              className="bg-white/30 backdrop-blur-xl border border-white/40 rounded-2xl shadow-lg p-6 hover:shadow-2xl transition"
+              className="relative bg-white/30 backdrop-blur-xl border border-white/40 rounded-2xl shadow-lg p-6 hover:shadow-2xl transition"
             >
-              <h2 className="text-xl font-bold text-blue-900 drop-shadow mb-2">{item.judul}</h2>
-
+              <h2 className="text-xl font-bold text-blue-900 drop-shadow mb-2">
+                {item.judul}
+              </h2>
               <p className="text-blue-900/90">Pengarang: {item.pengarang}</p>
               <p className="text-blue-900/90">Penerbit: {item.penerbit}</p>
               <p className="text-blue-900/90">Tahun: {item.tahun_terbit}</p>
               <p className="text-blue-900/90">Kategori: {item.kategori}</p>
-
               <p className="mt-2 mb-4 text-blue-900 font-semibold">
                 Stok:
-                <span className={item.stok > 0 ? "text-green-700" : "text-red-700"}>
+                <span
+                  className={item.stok > 0 ? "text-green-700" : "text-red-700"}
+                >
                   {item.stok > 0 ? ` ${item.stok} tersedia` : " Habis"}
                 </span>
               </p>
 
+              {/* ICON WISHLIST */}
+              <button
+                onClick={() => handleToggleWishlist(item.id_buku)}
+                className="absolute top-4 right-4 cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  fill={wishlist.includes(item.id_buku) ? "red" : "gray"}
+                >
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+              </button>
+
               {role === "admin" ? (
-                <div className="flex gap-2 items-center">
+                <div className="flex gap-2 items-center mt-4">
                   <input
                     type="number"
                     min="1"
                     placeholder="0"
                     value={stokTambah[item.id_buku] || ""}
-                    onChange={(e) => setStokTambah({ ...stokTambah, [item.id_buku]: e.target.value })}
+                    onChange={(e) =>
+                      setStokTambah({
+                        ...stokTambah,
+                        [item.id_buku]: e.target.value,
+                      })
+                    }
                     className="border border-white/50 rounded-lg p-2 w-20 bg-white/40 text-blue-900"
                   />
                   <button
@@ -339,13 +419,14 @@ export default function BukuPage() {
                     Hapus
                   </button>
                 </div>
-
               ) : (
                 <button
                   onClick={() => handlePinjam(item.id_buku)}
                   disabled={item.stok === 0}
                   className={`w-full mt-3 py-3 rounded-xl font-semibold text-white shadow-lg ${
-                    item.stok === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-700 hover:bg-blue-800"
+                    item.stok === 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-700 hover:bg-blue-800"
                   }`}
                 >
                   {item.stok === 0 ? "Stok Habis" : "Pinjam Buku"}
@@ -354,7 +435,6 @@ export default function BukuPage() {
             </div>
           ))}
         </div>
-
       </main>
     </div>
   );

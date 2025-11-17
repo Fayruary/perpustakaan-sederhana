@@ -11,6 +11,8 @@ import {
   Menu,
   X,
   User,
+  Heart,
+  MessageSquare,
 } from "lucide-react";
 
 export default function PeminjamanPage() {
@@ -164,32 +166,40 @@ export default function PeminjamanPage() {
         <h1 className="text-2xl font-bold text-blue-800 mb-8 text-start">
           JendelaDunia
         </h1>
-
-        <nav className="space-y-3">
+        <nav className="flex flex-col">
           <Link
             href="/home"
-            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white text-blue-700 font-medium shadow hover:bg-blue-100 transition"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
           >
             <Home className="w-5 h-5" /> Beranda
           </Link>
-
           <Link
             href="/buku"
-            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white text-blue-700 font-medium shadow hover:bg-blue-100 transition"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
           >
             <BookOpen className="w-5 h-5" /> Buku
           </Link>
-
           <Link
             href="/peminjaman"
-            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-blue-600 text-white font-medium shadow hover:bg-blue-700 transition"
+            className="flex items-center gap-3 py-3 px-4 text-white bg-blue-600 rounded-r-full hover:bg-blue-700 transition"
           >
             <ClipboardList className="w-5 h-5" /> Peminjaman
           </Link>
-
+          <Link
+            href="/wishlist"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
+          >
+            <Heart className="w-5 h-5" /> Wishlist
+          </Link>
+          <Link
+            href="/forum"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
+          >
+            <MessageSquare className="w-5 h-5" /> Forum
+          </Link>
           <Link
             href="/profile"
-            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white text-blue-700 font-medium shadow hover:bg-blue-100 transition"
+            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
           >
             <User className="w-5 h-5" /> Profile
           </Link>

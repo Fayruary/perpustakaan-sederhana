@@ -10,7 +10,6 @@ export default function SearchFilter({
 }) {
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-4 mb-10">
-
       {/* Search Bar */}
       <div className="flex items-center bg-white/60 backdrop-blur border border-white/40 rounded-xl px-4 py-2 shadow w-full">
         <Search className="w-5 h-5 text-blue-700" />
@@ -31,10 +30,11 @@ export default function SearchFilter({
       >
         <option value="">Semua Kategori</option>
         {kategoriList.map((k) => (
-          <option key={k} value={k}>{k}</option>
+          <option key={k} value={k}>
+            {k}
+          </option>
         ))}
       </select>
-
     </div>
   );
 }

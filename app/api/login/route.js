@@ -17,7 +17,10 @@ export async function POST(req) {
     const { email, password } = await req.json();
 
     if (!email || !password) {
-      return NextResponse.json({ message: "Email dan password wajib diisi" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Email dan password wajib diisi" },
+        { status: 400 }
+      );
     }
 
     const [rows] = await db.query(
@@ -28,7 +31,10 @@ export async function POST(req) {
     await db.end();
 
     if (rows.length === 0) {
-      return NextResponse.json({ message: "Email tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Email tidak ditemukan" },
+        { status: 404 }
+      );
     }
 
     const user = rows[0];
@@ -55,11 +61,16 @@ export async function POST(req) {
 
     response.cookies.set("token", token, { httpOnly: true, path: "/" });
     response.cookies.set("role", user.status, { path: "/" });
-    response.cookies.set("id_anggota", user.id_anggota.toString(), { path: "/" });
+    response.cookies.set("id_anggota", user.id_anggota.toString(), {
+      path: "/",
+    });
 
     return response;
   } catch (error) {
     console.error("❌ Error login:", error);
-    return NextResponse.json({ message: "Terjadi kesalahan server", error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { message: "Terjadi kesalahan server", error: error.message },
+      { status: 500 }
+    );
   }
 }

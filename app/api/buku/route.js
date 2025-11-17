@@ -52,7 +52,13 @@ export async function POST(req) {
     const body = await req.json();
     const { judul, pengarang, penerbit, tahun_terbit, kategori, stok } = body;
 
-    if (!judul || !pengarang || !penerbit || !tahun_terbit || stok === undefined) {
+    if (
+      !judul ||
+      !pengarang ||
+      !penerbit ||
+      !tahun_terbit ||
+      stok === undefined
+    ) {
       return NextResponse.json(
         { message: "Data buku tidak lengkap" },
         { status: 400 }
@@ -93,10 +99,10 @@ export async function PATCH(req) {
     }
 
     const db = await connectDB();
-    await db.query(
-      `UPDATE buku SET stok = stok + ? WHERE id_buku = ?`,
-      [stok, id_buku]
-    );
+    await db.query(`UPDATE buku SET stok = stok + ? WHERE id_buku = ?`, [
+      stok,
+      id_buku,
+    ]);
     await db.end();
 
     return NextResponse.json({

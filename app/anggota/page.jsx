@@ -32,7 +32,9 @@ export default function DaftarAnggotaPage() {
       setTimeout(() => router.push("/login"), 1500);
     } else {
       const result = await res.json();
-      setPesan("❌ " + (result.message || "Terjadi kesalahan, coba lagi nanti."));
+      setPesan(
+        "❌ " + (result.message || "Terjadi kesalahan, coba lagi nanti.")
+      );
     }
 
     setLoading(false);
@@ -138,7 +140,7 @@ export default function DaftarAnggotaPage() {
               href="/login"
               className="text-sky-600 font-semibold hover:underline"
             >
-              Masuk 
+              Masuk
             </a>
           </p>
         </div>

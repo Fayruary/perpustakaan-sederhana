@@ -21,10 +21,15 @@ export async function POST(req) {
     }
 
     // Cek email sudah terdaftar
-    const [existing] = await db.query("SELECT * FROM anggota WHERE email = ?", [email]);
+    const [existing] = await db.query("SELECT * FROM anggota WHERE email = ?", [
+      email,
+    ]);
     if (existing.length > 0) {
       await db.end();
-      return NextResponse.json({ message: "Email sudah digunakan" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Email sudah digunakan" },
+        { status: 400 }
+      );
     }
 
     const tanggal_daftar = new Date().toISOString().slice(0, 10);
@@ -43,6 +48,9 @@ export async function POST(req) {
     return NextResponse.json({ message: "✅ Anggota berhasil didaftarkan!" });
   } catch (error) {
     console.error("❌ Error POST /anggota:", error);
-    return NextResponse.json({ message: "Terjadi kesalahan server", error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { message: "Terjadi kesalahan server", error: error.message },
+      { status: 500 }
+    );
   }
 }
