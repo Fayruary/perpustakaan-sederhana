@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 
-// 🔹 Tambahkan ini supaya route bersifat dynamic
+// Supaya route bisa dynamic dan tidak cache
 export const dynamic = "force-dynamic";
 
+// Koneksi ke database
 async function connectDB() {
   return await mysql.createConnection({
     host: "localhost",
@@ -13,7 +14,9 @@ async function connectDB() {
   });
 }
 
+// ======================================================
 // GET → Ambil semua buku
+// ======================================================
 export async function GET() {
   try {
     const db = await connectDB();
@@ -30,6 +33,7 @@ export async function GET() {
       ORDER BY id_buku DESC
     `);
     await db.end();
+
     return NextResponse.json(rows);
   } catch (error) {
     console.error("❌ Error di API GET /buku:", error);
@@ -40,7 +44,9 @@ export async function GET() {
   }
 }
 
+// ======================================================
 // POST → Tambah buku baru
+// ======================================================
 export async function POST(req) {
   try {
     const body = await req.json();
@@ -71,7 +77,9 @@ export async function POST(req) {
   }
 }
 
+// ======================================================
 // PATCH → Tambah stok buku
+// ======================================================
 export async function PATCH(req) {
   try {
     const body = await req.json();
@@ -85,12 +93,48 @@ export async function PATCH(req) {
     }
 
     const db = await connectDB();
-    await db.query(`UPDATE buku SET stok = stok + ? WHERE id_buku = ?`, [stok, id_buku]);
+    await db.query(
+      `UPDATE buku SET stok = stok + ? WHERE id_buku = ?`,
+      [stok, id_buku]
+    );
     await db.end();
 
-    return NextResponse.json({ message: `✅ Stok berhasil ditambahkan +${stok}` });
+    return NextResponse.json({
+      message: `✅ Stok berhasil ditambahkan +${stok}`,
+    });
   } catch (error) {
     console.error("❌ Error di API PATCH /buku:", error);
+    return NextResponse.json(
+      { message: "Terjadi kesalahan server", error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// ======================================================
+// DELETE → Hapus buku
+// ======================================================
+export async function DELETE(req) {
+  try {
+    const body = await req.json();
+    const { id_buku } = body;
+
+    if (!id_buku) {
+      return NextResponse.json(
+        { message: "ID buku tidak ditemukan" },
+        { status: 400 }
+      );
+    }
+
+    const db = await connectDB();
+    await db.query(`DELETE FROM buku WHERE id_buku = ?`, [id_buku]);
+    await db.end();
+
+    return NextResponse.json({
+      message: "Buku berhasil dihapus!",
+    });
+  } catch (error) {
+    console.error("❌ Error di API DELETE /buku:", error);
     return NextResponse.json(
       { message: "Terjadi kesalahan server", error: error.message },
       { status: 500 }
