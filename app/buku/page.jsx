@@ -24,6 +24,7 @@ export default function BukuPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [kategoriFilter, setKategoriFilter] = useState("");
+
   const [formTambah, setFormTambah] = useState({
     judul: "",
     pengarang: "",
@@ -32,18 +33,19 @@ export default function BukuPage() {
     kategori: "",
     stok: 1,
   });
+
   const [stokTambah, setStokTambah] = useState({});
   const [wishlist, setWishlist] = useState([]);
   const router = useRouter();
 
-  // Ambil data awal: role, nama, buku, wishlist per user
+  // ============================
+  // LOAD ROLE + NAMA + WISHLIST
+  // ============================
   useEffect(() => {
     const r = localStorage.getItem("role");
     const n = localStorage.getItem("nama");
     const idAnggota = localStorage.getItem("id_anggota");
-    const wl = JSON.parse(
-      localStorage.getItem(`wishlist_${idAnggota}`) || "[]"
-    );
+    const wl = JSON.parse(localStorage.getItem(`wishlist_${idAnggota}`) || "[]");
 
     setRole(r);
     setNama(n);
@@ -56,10 +58,15 @@ export default function BukuPage() {
     fetchBuku();
   }, []);
 
-  // Toggle wishlist per user
+  // =====================================================
+  // WISHLIST — HANYA BISA DILAKUKAN OLEH SISWA (BUKAN ADMIN)
+  // =====================================================
   const handleToggleWishlist = (id_buku) => {
+    if (role === "admin") return; // ADMIN TIDAK BISA LIKE
+
     const idAnggota = localStorage.getItem("id_anggota");
     let updatedWishlist;
+
     if (wishlist.includes(id_buku)) {
       updatedWishlist = wishlist.filter((id) => id !== id_buku);
     } else {
@@ -67,13 +74,10 @@ export default function BukuPage() {
     }
 
     setWishlist(updatedWishlist);
-    localStorage.setItem(
-      `wishlist_${idAnggota}`,
-      JSON.stringify(updatedWishlist)
-    );
+    localStorage.setItem(`wishlist_${idAnggota}`, JSON.stringify(updatedWishlist));
   };
 
-  // Pinjam buku (siswa)
+  // PINJAM BUKU (SISWA)
   const handlePinjam = async (id_buku) => {
     const id_anggota = Number(localStorage.getItem("id_anggota"));
     if (!id_anggota) {
@@ -105,7 +109,7 @@ export default function BukuPage() {
     }
   };
 
-  // Tambah buku (admin)
+  // TAMBAH BUKU ADMIN
   const handleTambahBuku = async (e) => {
     e.preventDefault();
     try {
@@ -134,7 +138,7 @@ export default function BukuPage() {
     }
   };
 
-  // Tambah stok (admin)
+  // TAMBAH STOK ADMIN
   const handleTambahStok = async (id_buku) => {
     const jumlah = Number(stokTambah[id_buku]);
     if (!jumlah || jumlah <= 0) return;
@@ -156,7 +160,7 @@ export default function BukuPage() {
     }
   };
 
-  // Hapus buku (admin)
+  // HAPUS BUKU ADMIN
   const handleHapusBuku = async (id_buku) => {
     const konfirmasi = await Swal.fire({
       icon: "warning",
@@ -187,7 +191,7 @@ export default function BukuPage() {
     }
   };
 
-  // Filter search + kategori
+  // FILTER
   const kategoriList = [...new Set(buku.map((b) => b.kategori))];
   const filteredBooks = buku.filter((b) => {
     const cocokSearch = b.judul.toLowerCase().includes(search.toLowerCase());
@@ -195,7 +199,7 @@ export default function BukuPage() {
     return cocokSearch && cocokKategori;
   });
 
-  // Sidebar
+  // SIDEBAR
   const SidebarContent = (
     <div className="flex flex-col justify-between h-full">
       <div>
@@ -203,48 +207,32 @@ export default function BukuPage() {
           JendelaDunia
         </h1>
         <nav className="flex flex-col">
-          <Link
-            href="/home"
-            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
-          >
+          <Link href="/home" className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition">
             <Home className="w-5 h-5" /> Beranda
           </Link>
-          <Link
-            href="/buku"
-            className="flex items-center gap-3 py-3 px-4 text-white bg-blue-600 rounded-r-full hover:bg-blue-700 transition"
-          >
+          <Link href="/buku" className="flex items-center gap-3 py-3 px-4 text-white bg-blue-600 rounded-r-full hover:bg-blue-700 transition">
             <BookOpen className="w-5 h-5" /> Buku
           </Link>
-          <Link
-            href="/peminjaman"
-            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
-          >
+          <Link href="/peminjaman" className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition">
             <ClipboardList className="w-5 h-5" /> Peminjaman
           </Link>
-          <Link
-            href="/wishlist"
-            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
-          >
+          <Link href="/wishlist" className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition">
             <Heart className="w-5 h-5" /> Wishlist
           </Link>
-          <Link
-            href="/forum"
-            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
-          >
+          <Link href="/forum" className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition">
             <MessageSquare className="w-5 h-5" /> Forum
           </Link>
-          <Link
-            href="/profile"
-            className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition"
-          >
+          <Link href="/profile" className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition">
             <User className="w-5 h-5" /> Profile
           </Link>
         </nav>
       </div>
+
       <div>
         <p className="text-blue-900 font-semibold mb-3 text-center">
           {nama} ({role})
         </p>
+
         <button
           onClick={() => {
             localStorage.clear();
@@ -260,12 +248,10 @@ export default function BukuPage() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-sky-50 to-blue-100">
-      {/* Sidebar Desktop */}
       <aside className="hidden md:flex w-64 fixed h-full bg-blue-200/70 backdrop-blur-md shadow-lg p-6">
         {SidebarContent}
       </aside>
 
-      {/* Hamburger Mobile */}
       {!sidebarOpen && (
         <button
           className="md:hidden fixed top-5 left-5 bg-blue-700 text-white p-3 rounded-xl shadow-lg z-50"
@@ -275,7 +261,6 @@ export default function BukuPage() {
         </button>
       )}
 
-      {/* Sidebar Mobile */}
       <aside
         className={`md:hidden fixed top-0 left-0 z-50 h-full w-64 bg-white/20 backdrop-blur-xl border-r border-white/30 shadow-xl p-6 transform duration-300 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -287,19 +272,18 @@ export default function BukuPage() {
         >
           <X className="w-5 h-5 text-blue-900" />
         </button>
+
         {SidebarContent}
       </aside>
 
-      {/* Konten */}
+      {/* ISI HALAMAN */}
       <main className="flex-1 md:ml-64 p-10">
         <h1 className="text-4xl font-bold text-blue-900 text-center mb-10 drop-shadow">
           Daftar Buku Perpustakaan
         </h1>
 
         {pesan && (
-          <p className="text-center text-green-700 font-semibold mb-8">
-            {pesan}
-          </p>
+          <p className="text-center text-green-700 font-semibold mb-8">{pesan}</p>
         )}
 
         <SearchFilter
@@ -313,35 +297,21 @@ export default function BukuPage() {
         {/* FORM TAMBAH BUKU ADMIN */}
         {role === "admin" && (
           <div className="bg-white/30 backdrop-blur-xl border border-white/40 rounded-2xl shadow-xl p-8 mb-12">
-            <h2 className="text-2xl font-semibold text-blue-900 mb-6">
-              Tambah Buku Baru
-            </h2>
-            <form
-              onSubmit={handleTambahBuku}
-              className="grid md:grid-cols-2 gap-4"
-            >
-              {[
-                "judul",
-                "pengarang",
-                "penerbit",
-                "tahun_terbit",
-                "kategori",
-                "stok",
-              ].map((field, i) => (
+            <h2 className="text-2xl font-semibold text-blue-900 mb-6">Tambah Buku Baru</h2>
+
+            <form onSubmit={handleTambahBuku} className="grid md:grid-cols-2 gap-4">
+              {["judul", "pengarang", "penerbit", "tahun_terbit", "kategori", "stok"].map((field) => (
                 <input
-                  key={i}
-                  type={
-                    ["tahun_terbit", "stok"].includes(field) ? "number" : "text"
-                  }
+                  key={field}
+                  type={["tahun_terbit", "stok"].includes(field) ? "number" : "text"}
                   placeholder={field.replace("_", " ").toUpperCase()}
                   value={formTambah[field]}
-                  onChange={(e) =>
-                    setFormTambah({ ...formTambah, [field]: e.target.value })
-                  }
+                  onChange={(e) => setFormTambah({ ...formTambah, [field]: e.target.value })}
                   className="p-3 border border-white/50 rounded-xl bg-white/40 text-blue-900 placeholder-blue-700/60"
                   required
                 />
               ))}
+
               <button
                 type="submit"
                 className="md:col-span-2 bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-semibold shadow-lg"
@@ -362,35 +332,34 @@ export default function BukuPage() {
               <h2 className="text-xl font-bold text-blue-900 drop-shadow mb-2">
                 {item.judul}
               </h2>
+
               <p className="text-blue-900/90">Pengarang: {item.pengarang}</p>
               <p className="text-blue-900/90">Penerbit: {item.penerbit}</p>
               <p className="text-blue-900/90">Tahun: {item.tahun_terbit}</p>
               <p className="text-blue-900/90">Kategori: {item.kategori}</p>
+
               <p className="mt-2 mb-4 text-blue-900 font-semibold">
                 Stok:
-                <span
-                  className={item.stok > 0 ? "text-green-700" : "text-red-700"}
-                >
+                <span className={item.stok > 0 ? "text-green-700" : "text-red-700"}>
                   {item.stok > 0 ? ` ${item.stok} tersedia` : " Habis"}
                 </span>
               </p>
 
-              {/* ICON WISHLIST */}
-              <button
-                onClick={() => handleToggleWishlist(item.id_buku)}
-                className="absolute top-4 right-4 cursor-pointer"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                  fill={wishlist.includes(item.id_buku) ? "red" : "gray"}
+              {/* WISHLIST — HANYA UNTUK SISWA */}
+              {role !== "admin" && (
+                <button
+                  onClick={() => handleToggleWishlist(item.id_buku)}
+                  className="absolute top-4 right-4 cursor-pointer"
                 >
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                </svg>
-              </button>
+                  <Heart
+                    fill={wishlist.includes(item.id_buku) ? "red" : "none"}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  />
+                </button>
+              )}
 
+              {/* ADMIN CONTROL */}
               {role === "admin" ? (
                 <div className="flex gap-2 items-center mt-4">
                   <input
@@ -424,9 +393,7 @@ export default function BukuPage() {
                   onClick={() => handlePinjam(item.id_buku)}
                   disabled={item.stok === 0}
                   className={`w-full mt-3 py-3 rounded-xl font-semibold text-white shadow-lg ${
-                    item.stok === 0
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-700 hover:bg-blue-800"
+                    item.stok === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-700 hover:bg-blue-800"
                   }`}
                 >
                   {item.stok === 0 ? "Stok Habis" : "Pinjam Buku"}

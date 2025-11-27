@@ -7,6 +7,14 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import Footer from "./components/Footer";
+import {
+  BookOpen,
+  Users,
+  Shield,
+  TrendingUp,
+  Star,
+  Library,
+} from "lucide-react";
 
 
 export default function HomePage() {
@@ -45,6 +53,32 @@ export default function HomePage() {
     }
   };
 
+  const features = [
+  {
+    icon: Library,
+    title: "Ribuan Koleksi",
+    description: "Akses ribuan buku dari berbagai genre, mulai dari fiksi, non-fiksi, hingga buku akademik.",
+    gradient: "from-blue-500 to-cyan-500",
+  },
+  {
+    icon: BookOpen,
+    title: "Informasi Lengkap",
+    description: "Lihat detail buku, termasuk penulis, kategori, penerbit, tahun dan stok nya, sehingga lebih mudah saat meminjam.",
+    gradient: "from-indigo-500 to-blue-500",
+  },
+  {
+    icon: Shield,
+    title: "Gratis dan Aman",
+    description: "Semua anggota mendapatkan akses gratis dan data pribadi dijaga dengan aman.",
+    gradient: "from-blue-600 to-indigo-600",
+  },
+];
+
+const stats = [
+  { value: "5000+", label: "Buku Tersedia", icon: BookOpen },
+  { value: "1200+", label: "Anggota Terdaftar", icon: Users },
+  { value: "99%", label: "Kepuasan Pengguna", icon: Star },
+];
   // ✅ Fungsi tombol "Jelajahi Sekarang"
   const handleExplore = (e) => {
     if (!isLoggedIn) {
@@ -143,62 +177,89 @@ export default function HomePage() {
 <br></br>
 <br></br>
 <br></br>
-      {/* Fitur Unggulan */}
-      <section className="py-20 px-8 md:px-20 bg-blue-50">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-blue-900 mb-12">
-          Mengapa Memilih Kami
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
-          >
-            <h3 className="text-xl font-semibold mb-3 text-blue-700">Ribuan Koleksi</h3>
-            <p className="text-gray-700">
-              Akses ribuan buku dari berbagai genre, mulai dari fiksi, non-fiksi, hingga buku akademik.
-            </p>
-          </motion.div>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
-          >
-             <h3 className="text-xl font-semibold mb-3 text-blue-700">Informasi Lengkap</h3>
-  <p className="text-gray-700">
-    Lihat detail buku, termasuk penulis, kategori, penerbit, tahun dan stok nya, sehingga lebih mudah saat meminjam.
-  </p>
-          </motion.div>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
-          >
-            <h3 className="text-xl font-semibold mb-3 text-blue-700">Gratis dan Aman</h3>
-            <p className="text-gray-700">
-              Semua anggota mendapatkan akses gratis dan data pribadi dijaga dengan aman.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+     
+{/* Features Section */}
+<section id="features" className="py-16 px-6 bg-white/50 backdrop-blur-sm">
+  <div className="max-w-6xl mx-auto">
+    <div className="text-center mb-12">
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium mb-3">
+        <Star className="w-3.5 h-3.5" />
+        Fitur Unggulan
+      </div>
+      <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-3">
+        Mengapa Memilih <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">JendelaDunia</span>
+      </h2>
+      <p className="text-gray-600 text-sm max-w-2xl mx-auto">
+        Platform perpustakaan digital yang dirancang untuk memberikan pengalaman terbaik
+      </p>
+    </div>
 
-      {/* Statistik Singkat */}
-      <section className="py-20 px-8 md:px-20 bg-blue-100/50">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-blue-900 mb-12">
-          Statistik Perpustakaan
-        </h2>
-        <div className="flex flex-col md:flex-row justify-around items-center gap-8 text-center">
-          <motion.div whileHover={{ scale: 1.1 }}>
-            <h3 className="text-4xl font-bold text-blue-700">5000+</h3>
-            <p className="text-gray-700">Buku Tersedia</p>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.1 }}>
-            <h3 className="text-4xl font-bold text-blue-700">1200+</h3>
-            <p className="text-gray-700">Anggota Terdaftar</p>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.1 }}>
-            <h3 className="text-4xl font-bold text-blue-700">99%</h3>
-            <p className="text-gray-700">Kepuasan Pengguna</p>
-          </motion.div>
-        </div>
-      </section>
+    <div className="grid md:grid-cols-3 gap-6">
+      {features.map((feature, index) => (
+        <motion.div
+          key={index}
+          whileHover={{ scale: 1.05 }}
+          className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-500 border border-gray-100"
+        >
+          <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity`}></div>
+          
+          <div className="relative">
+            <div className={`w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-md`}>
+              <feature.icon className="w-7 h-7 text-white" />
+            </div>
+            
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              {feature.title}
+            </h3>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {feature.description}
+            </p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
+
+      {/* Stats Section */}
+<section className="py-16 px-6">
+  <div className="max-w-6xl mx-auto">
+    <div className="text-center mb-12">
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium mb-3">
+        <TrendingUp className="w-3.5 h-3.5" />
+        Statistik Perpustakaan
+      </div>
+      <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">
+        Dipercaya oleh <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Ribuan Pengguna</span>
+      </h2>
+    </div>
+
+    <div className="grid md:grid-cols-3 gap-6">
+      {stats.map((stat, index) => (
+        <motion.div
+          key={index}
+          whileHover={{ scale: 1.05 }}
+          className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 border border-blue-100 text-center"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          
+          <div className="relative">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-md">
+              <stat.icon className="w-8 h-8 text-white" />
+            </div>
+            
+            <h3 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+              {stat.value}
+            </h3>
+            <p className="text-gray-600 font-medium text-sm">
+              {stat.label}
+            </p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* Call to Action Tambahan */}
       <section className="py-20 px-8 md:px-20 bg-blue-600 text-white text-center rounded-2xl mx-8 md:mx-20 my-16 shadow-lg">
