@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import Footer from "../src/components/Footer";
+import Footer from "./components/Footer";
 import {
   BookOpen,
   Users,
