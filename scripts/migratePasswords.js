@@ -10,7 +10,7 @@ async function migratePasswords() {
       database: "db_perpus",
     });
 
-    console.log("🔹 Terhubung ke database");
+    console.log("Terhubung ke database");
 
     const [users] = await db.query("SELECT id_anggota, nama, password FROM anggota");
     let count = 0;
@@ -22,17 +22,17 @@ async function migratePasswords() {
 
         // Update password di database
         await db.query("UPDATE anggota SET password = ? WHERE id_anggota = ?", [hashed, user.id_anggota]);
-        console.log(`✅ Password untuk "${user.nama}" (ID: ${user.id_anggota}) berhasil di-hash`);
+        console.log(`Password untuk "${user.nama}" (ID: ${user.id_anggota}) berhasil di-hash`);
         count++;
       } else {
-        console.log(`ℹ️ Password untuk "${user.nama}" (ID: ${user.id_anggota}) sudah di-hash, dilewati`);
+        console.log(`Password untuk "${user.nama}" (ID: ${user.id_anggota}) sudah di-hash, dilewati`);
       }
     }
 
     await db.end();
-    console.log(`\n🎉 Selesai! Total password yang di-hash: ${count}`);
+    console.log(`Selesai! Total password yang di-hash: ${count}`);
   } catch (error) {
-    console.error("❌ Terjadi error saat migrate password:", error);
+    console.error("Terjadi error saat migrate password:", error);
   }
 }
 
