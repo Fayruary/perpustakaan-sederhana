@@ -198,16 +198,19 @@ export default function BukuPage() {
   const SidebarContent = (
     <div className="flex flex-col justify-between h-full">
       <div>
-        <h1 className="text-2xl font-bold text-blue-800 mb-8 text-start">
+        <h1 className="text-2xl font-bold text-blue-900 mb-8 text-start">
           JendelaDunia
         </h1>
         <nav className="flex flex-col">
           <Link href="/home" className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition">
             <Home className="w-5 h-5" /> Beranda
           </Link>
-          <Link href="/buku" className="flex items-center gap-3 py-3 px-4 text-white bg-blue-600 rounded-r-full hover:bg-blue-700 transition">
+
+          {/* UPDATE WARNA TEKS */}
+          <Link href="/buku" className="flex items-center gap-3 py-3 px-4 text-blue-800 bg-blue-300 rounded-r-full hover:bg-blue-400 transition">
             <BookOpen className="w-5 h-5" /> Buku
           </Link>
+
           <Link href="/peminjaman" className="flex items-center gap-3 py-3 px-4 text-blue-700 hover:text-blue-900 border-b border-blue-300 transition">
             <ClipboardList className="w-5 h-5" /> Peminjaman
           </Link>
@@ -241,14 +244,13 @@ export default function BukuPage() {
     </div>
   );
 
-
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-sky-50 to-blue-100">
       <aside className="hidden md:flex w-64 fixed h-full bg-blue-200/70 backdrop-blur-md shadow-lg p-6">
         {SidebarContent}
       </aside>
 
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu */}
       {!sidebarOpen && (
         <button
           className="md:hidden fixed top-4 left-4 bg-blue-600 text-white p-3 rounded-xl shadow-lg z-50 hover:bg-blue-700 transition-colors"
@@ -258,7 +260,7 @@ export default function BukuPage() {
         </button>
       )}
 
-      {/* Sidebar Mobile */}
+      {/* Mobile Sidebar */}
       <aside
         className={`md:hidden fixed top-0 left-0 z-50 h-full w-72 bg-white shadow-2xl p-6 transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -274,9 +276,8 @@ export default function BukuPage() {
         {SidebarContent}
       </aside>
 
-      {/* Overlay untuk mobile */}
       {sidebarOpen && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-black/30 z-40"
           onClick={() => setSidebarOpen(false)}
         />
@@ -284,17 +285,15 @@ export default function BukuPage() {
 
       {/* Main Content */}
       <main className="flex-1 md:ml-64 p-6 md:p-10">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-blue-900 mb-2">
             Koleksi Buku Perpustakaan
           </h1>
-          <p className="text-blue-600">Jelajahi dan pinjam buku favorit Anda</p>
+          <p className="text-blue-700">Jelajahi dan pinjam buku favorit Anda</p>
         </div>
 
-        {/* Pesan Notifikasi */}
         {pesan && (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6 shadow-sm">
+          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6 shadow-sm">
             <p className="font-medium">{pesan}</p>
           </div>
         )}
@@ -303,20 +302,20 @@ export default function BukuPage() {
         <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 mb-8">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Cari judul buku..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-base font-medium placeholder:text-gray-400"
+                className="w-full pl-10 pr-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
               />
             </div>
-            
+
             <select
               value={kategoriFilter}
               onChange={(e) => setKategoriFilter(e.target.value)}
-              className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-base font-medium"
+              className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
             >
               <option value="">Semua Kategori</option>
               {kategoriList.map((kat) => (
@@ -328,9 +327,9 @@ export default function BukuPage() {
           </div>
         </div>
 
-        {/* Form Tambah Buku (Admin) */}
+        {/* FORM ADMIN */}
         {role === "admin" && (
-          <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-sm border border-blue-100 p-6 md:p-8 mb-8">
+          <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-sm border border-blue-100 p-6 mb-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-blue-600 rounded-lg p-2">
                 <Plus className="w-6 h-6 text-white" />
@@ -345,85 +344,87 @@ export default function BukuPage() {
                   placeholder="Judul Buku"
                   value={formTambah.judul}
                   onChange={(e) => setFormTambah({ ...formTambah, judul: e.target.value })}
-                  className="px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                 />
-                
+
                 <input
                   type="text"
                   placeholder="Pengarang"
                   value={formTambah.pengarang}
                   onChange={(e) => setFormTambah({ ...formTambah, pengarang: e.target.value })}
-                  className="px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                 />
-                
+
                 <input
                   type="text"
                   placeholder="Penerbit"
                   value={formTambah.penerbit}
                   onChange={(e) => setFormTambah({ ...formTambah, penerbit: e.target.value })}
-                  className="px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                 />
-                
+
                 <input
                   type="number"
                   placeholder="Tahun Terbit"
                   value={formTambah.tahun_terbit}
                   onChange={(e) => setFormTambah({ ...formTambah, tahun_terbit: e.target.value })}
-                  className="px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                 />
-                
+
                 <input
                   type="text"
                   placeholder="Kategori"
                   value={formTambah.kategori}
                   onChange={(e) => setFormTambah({ ...formTambah, kategori: e.target.value })}
-                  className="px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                 />
-                
+
                 <input
                   type="number"
                   placeholder="Stok"
                   min="1"
                   value={formTambah.stok}
                   onChange={(e) => setFormTambah({ ...formTambah, stok: e.target.value })}
-                  className="px-4 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
                 />
               </div>
 
               <button
                 onClick={handleTambahBuku}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-lg font-semibold shadow-md transition-all duration-200 flex items-center justify-center gap-2"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold shadow"
               >
-                <Plus className="w-5 h-5" />
+                <Plus className="w-5 h-5 inline-block mr-2" />
                 Tambah Buku
               </button>
             </div>
           </div>
         )}
 
-        {/* Daftar Buku */}
+        {/* LIST BUKU */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBooks.map((item) => (
             <div
               key={item.id_buku}
-              className="bg-white rounded-xl shadow-sm border border-blue-100 hover:shadow-lg transition-all duration-300 overflow-hidden group"
+              className="bg-white rounded-xl shadow border border-blue-100 hover:shadow-lg transition overflow-hidden"
             >
-              {/* Header Card */}
+              {/* HEADER CARD */}
               <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 relative">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <span className="inline-block bg-white/20 text-white text-xs px-3 py-1 rounded-full mb-2">
+                    <span className="inline-block bg-white/25 text-yellow-100 text-xs px-3 py-1 rounded-full mb-2">
                       {item.kategori}
                     </span>
-                    <h3 className="text-lg font-bold text-white line-clamp-2 group-hover:line-clamp-none transition-all">
+
+                    {/* UPDATE WARNA */}
+                    <h3 className="text-lg font-bold text-white/95 line-clamp-2">
                       {item.judul}
                     </h3>
                   </div>
-                  
+
                   {role !== "admin" && (
                     <button
                       onClick={() => handleToggleWishlist(item.id_buku)}
-                      className="ml-2 bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors"
+                      className="ml-2 bg-white/20 hover:bg-white/40 rounded-full p-2"
                     >
                       <Heart
                         fill={wishlist.includes(item.id_buku) ? "#ef4444" : "none"}
@@ -435,40 +436,43 @@ export default function BukuPage() {
                 </div>
               </div>
 
-              {/* Body Card */}
+              {/* BODY */}
               <div className="p-5 space-y-3">
                 <div className="space-y-2 text-sm">
                   <div className="flex items-start">
-                    <span className="text-blue-600 font-medium w-24 flex-shrink-0">Pengarang:</span>
-                    <span className="text-gray-700">{item.pengarang}</span>
+                    <span className="text-blue-700 font-semibold w-24">Pengarang:</span>
+                    <span className="text-gray-800">{item.pengarang}</span>
                   </div>
-                  
+
                   <div className="flex items-start">
-                    <span className="text-blue-600 font-medium w-24 flex-shrink-0">Penerbit:</span>
-                    <span className="text-gray-700">{item.penerbit}</span>
+                    <span className="text-blue-700 font-semibold w-24">Penerbit:</span>
+                    <span className="text-gray-800">{item.penerbit}</span>
                   </div>
-                  
+
                   <div className="flex items-start">
-                    <span className="text-blue-600 font-medium w-24 flex-shrink-0">Tahun:</span>
-                    <span className="text-gray-700">{item.tahun_terbit}</span>
+                    <span className="text-blue-700 font-semibold w-24">Tahun:</span>
+                    <span className="text-gray-800">{item.tahun_terbit}</span>
                   </div>
                 </div>
 
-                {/* Status Stok */}
+                {/* STATUS */}
                 <div className="pt-3 border-t border-blue-100">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-blue-600 font-medium">Ketersediaan:</span>
-                    <span className={`text-sm font-bold px-3 py-1 rounded-full ${
-                      item.stok > 0 
-                        ? "bg-green-100 text-green-700" 
-                        : "bg-red-100 text-red-700"
-                    }`}>
+                    <span className="text-sm text-blue-700 font-semibold">Ketersediaan:</span>
+
+                    <span
+                      className={`text-sm font-bold px-3 py-1 rounded-full ${
+                        item.stok > 0
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
                       {item.stok > 0 ? `${item.stok} Buku` : "Habis"}
                     </span>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* BUTTONS */}
                 <div className="pt-3">
                   {role === "admin" ? (
                     <div className="space-y-2">
@@ -476,7 +480,7 @@ export default function BukuPage() {
                         <input
                           type="number"
                           min="1"
-                          placeholder="Jumlah"
+                          placeholder="Tambah"
                           value={stokTambah[item.id_buku] || ""}
                           onChange={(e) =>
                             setStokTambah({
@@ -484,32 +488,31 @@ export default function BukuPage() {
                               [item.id_buku]: e.target.value,
                             })
                           }
-                          className="flex-1 px-3 py-2 border border-blue-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="flex-1 px-3 py-2 border border-blue-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500"
                         />
                         <button
                           onClick={() => handleTambahStok(item.id_buku)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition-colors font-medium text-sm"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
                         >
                           + Stok
                         </button>
                       </div>
-                      
+
                       <button
                         onClick={() => handleHapusBuku(item.id_buku)}
-                        className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow-sm transition-colors font-medium text-sm"
+                        className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2"
                       >
-                        <Trash2 className="w-4 h-4" />
-                        Hapus Buku
+                        <Trash2 className="w-4 h-4" /> Hapus Buku
                       </button>
                     </div>
                   ) : (
                     <button
                       onClick={() => handlePinjam(item.id_buku)}
                       disabled={item.stok === 0}
-                      className={`w-full py-3 rounded-lg font-semibold shadow-sm transition-all duration-200 ${
+                      className={`w-full py-3 rounded-lg font-semibold transition ${
                         item.stok === 0
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-md"
+                          ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700 text-white"
                       }`}
                     >
                       {item.stok === 0 ? "Stok Habis" : "Pinjam Sekarang"}
@@ -521,12 +524,13 @@ export default function BukuPage() {
           ))}
         </div>
 
-        {/* Empty State */}
         {filteredBooks.length === 0 && (
           <div className="text-center py-16">
             <BookOpen className="w-16 h-16 text-blue-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-blue-900 mb-2">Tidak ada buku ditemukan</h3>
-            <p className="text-blue-600">Coba ubah kata kunci pencarian atau filter kategori</p>
+            <h3 className="text-xl font-semibold text-blue-900 mb-2">
+              Tidak ada buku ditemukan
+            </h3>
+            <p className="text-blue-600">Coba ubah pencarian atau filter kategori</p>
           </div>
         )}
       </main>
