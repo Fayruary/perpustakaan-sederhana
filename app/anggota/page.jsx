@@ -62,7 +62,7 @@ export default function DaftarAnggotaPage() {
 
           {/* Heading */}
           <h1 className="text-3xl font-extrabold text-blue-900 mb-2">
-            Daftar Akun Baru ✨
+            Daftar Akun Baru 
           </h1>
           <p className="text-blue-700/80 mb-6 text-sm font-medium">
             Yuk, buat akunmu dan mulai menjelajahi dunia pengetahuan!

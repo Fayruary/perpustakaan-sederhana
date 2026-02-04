@@ -207,7 +207,7 @@ export default function BukuPage() {
           </Link>
 
           {/* UPDATE WARNA TEKS */}
-          <Link href="/buku" className="flex items-center gap-3 py-3 px-4 text-blue-800 bg-blue-300 rounded-r-full hover:bg-blue-400 transition">
+          <Link href="/buku" className="flex items-center gap-3 py-3 px-4 text-white bg-blue-600 rounded-r-full hover:bg-blue-700 transition">
             <BookOpen className="w-5 h-5" /> Buku
           </Link>
 

@@ -102,7 +102,7 @@ export default function LoginPage() {
           </div>
 
           <h1 className="text-3xl font-extrabold text-blue-900 mb-2">
-            Selamat Datang Kembali 👋
+            Selamat Datang Kembali 
           </h1>
           <p className="text-blue-700/80 mb-6 text-sm font-medium">
             Silakan masuk untuk melanjutkan ke sistem perpustakaan digital.
